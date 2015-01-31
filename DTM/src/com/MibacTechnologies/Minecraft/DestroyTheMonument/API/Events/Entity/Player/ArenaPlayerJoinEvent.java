@@ -1,7 +1,7 @@
-package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player;
+package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Player.CancellableArenaPlayerEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player.CancellableArenaPlayerEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.ArenaTeam;
 

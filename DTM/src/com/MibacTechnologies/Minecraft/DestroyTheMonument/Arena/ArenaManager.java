@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaCreateEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
 
 /**
@@ -48,9 +49,18 @@ public class ArenaManager {
 	public ArenaCreationResult create ( final String name,
 			final HashMap< ArenaTeam, Location > spawns ) {
 		Arena a = new Arena( name, spawns );
+		boolean b = false;
+
 		int id = getNextId( );
 
 		if ( contains( a ) )
+			b = false;
+
+		ArenaCreateEvent e = new ArenaCreateEvent( a, b );
+
+		DTM.pm.callEvent( e );
+
+		if ( e.isCancelled( ) )
 			return new ArenaCreationResult( null, -1, false );
 
 		arenas.add( a );

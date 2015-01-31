@@ -8,7 +8,8 @@ import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player.ArenaPlayerJoinEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerJoinEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerLeaveEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
 
 /**
@@ -78,7 +79,7 @@ public class Arena implements Serializable {
 
 		ArenaPlayer ap = new ArenaPlayer( player, this, e.getTeam( ) );
 
-		tm.addPlayer( ap.t, player );
+		tm.addPlayer( ap.team, player );
 
 		player.ap = ap;
 
@@ -118,7 +119,7 @@ public class Arena implements Serializable {
 		int c = 0;
 
 		for ( DTMPlayer p : players )
-			if ( p.ap.t == team )
+			if ( p.ap.team == team )
 				c++;
 
 		return c;
@@ -153,7 +154,7 @@ public class Arena implements Serializable {
 	public ArenaTeam getTeam ( final DTMPlayer player ) {
 		for ( DTMPlayer dp : players )
 			if ( dp.equals( player ) )
-				return dp.ap.t;
+				return dp.ap.team;
 
 		return null;
 	}
@@ -209,7 +210,9 @@ public class Arena implements Serializable {
 	 * @see UniqueList#remove(Object)
 	 */
 	public boolean removePlayer ( final DTMPlayer player ) {
+		DTM.pm.callEvent( new ArenaPlayerLeaveEvent( player, this ) );
 
+		player.ap = null;
 		return players.remove( player );
 	}
 

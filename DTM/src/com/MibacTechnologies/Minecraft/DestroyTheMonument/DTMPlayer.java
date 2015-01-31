@@ -1,5 +1,7 @@
 package com.MibacTechnologies.Minecraft.DestroyTheMonument;
 
+import java.io.Serializable;
+
 import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.ArenaPlayer;
@@ -8,11 +10,12 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.ArenaPlayer;
  * @author Michał "mibac138" Bączkowski
  * @since Creation date: 28 Jan 2015 (18:34:37)
  */
-public class DTMPlayer {
+public class DTMPlayer implements Serializable {
+	private static final long serialVersionUID = 1L;
 	public final Player p;
-	public final int kills;
-	public final int deaths;
-	public final int money;
+	public int kills;
+	public int deaths;
+	public int money;
 	public ArenaPlayer ap;
 
 	public DTMPlayer( final Player p, final int kills, final int deaths,

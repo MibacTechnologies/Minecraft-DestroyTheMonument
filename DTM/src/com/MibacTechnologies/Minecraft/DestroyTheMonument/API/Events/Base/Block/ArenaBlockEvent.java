@@ -3,7 +3,7 @@ package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Block
 import org.bukkit.Location;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Player.ArenaPlayerEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player.ArenaPlayerEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**

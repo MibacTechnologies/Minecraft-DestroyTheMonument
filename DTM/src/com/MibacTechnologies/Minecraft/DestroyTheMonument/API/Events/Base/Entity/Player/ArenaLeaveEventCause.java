@@ -1,12 +1,12 @@
-package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Player;
+package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player;
 
 import java.io.IOException;
 
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player.ArenaPlayerLeaveEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerLeaveEvent;
 
 /**
- * Used in {@link ArenaPlayerLeaveEvent} as cause (of leave). Sorted from
- * most friendly
+ * Used in {@link ArenaPlayerLeaveEvent} as cause (of leave). Sorted
+ * from most friendly to the worse
  */
 public enum ArenaLeaveEventCause {
 	/**

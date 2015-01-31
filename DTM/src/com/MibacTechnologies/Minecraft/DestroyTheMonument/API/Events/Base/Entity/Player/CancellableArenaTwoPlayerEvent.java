@@ -1,4 +1,4 @@
-package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Player;
+package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player;
 
 import org.bukkit.event.Cancellable;
 

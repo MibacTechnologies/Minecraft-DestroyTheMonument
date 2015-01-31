@@ -1,8 +1,5 @@
 package com.MibacTechnologies.Minecraft.DestroyTheMonument.Listeners;
 
-import java.util.HashMap;
-
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,11 +8,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerDeathEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.ArenaPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.BooleanUtils;
 
@@ -31,23 +27,25 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler
 	public void death ( final PlayerDeathEvent e ) {
-		Arena a = DTM.AM.getArena( e.getEntity( ) );
+		DTMPlayer p1 = DTM.PM.getDTMPlayer( e.getEntity( ) );
+		DTMPlayer p2 = DTM.PM.getDTMPlayer( e.getEntity( ).getKiller( ) );
 
-		if ( a == null )
+		if ( !( p1 != null && p2 != null ) )
 			return;
 
-		e.getEntity( ).teleport( a.getSpawn( e.getEntity( ) ) );
+		if ( !p1.isPlaying( ) || !p2.isPlaying( ) )
+			return;
 
-		Damageable da = e.getEntity( );
+		if ( !p1.ap.arena.equals( p2.ap.arena ) )
+			return;
 
-		da.setHealth( da.getMaxHealth( ) );
+		p1.deaths++;
+		p2.kills++;
 
-		e.getEntity( ).getInventory( ).clear( );
+		p1.ap.deaths++;
+		p2.ap.kills++;
 
-		HashMap< Integer, ItemStack > items = DTM.IM.getItems( );
-
-		for ( int i = 0; i < items.size( ); i++ )
-			e.getEntity( ).getInventory( ).setItem( i, items.get( i ) );
+		DTM.pm.callEvent( new ArenaPlayerDeathEvent( p2, p2, p1.ap.arena ) );
 	}
 
 	@EventHandler
@@ -67,24 +65,26 @@ public class PlayerEvents implements Listener {
 		if ( victim == null || damager == null )
 			return;
 
-		if ( BooleanUtils
-				.countBools( victim.isPlaying( ), damager.isPlaying( ) ) == 1 ) {
+		int c = BooleanUtils.countBools( victim.isPlaying( ),
+				damager.isPlaying( ) );
+
+		if ( c == 0 )
+			return;
+
+		if ( c == 1 ) {
 			e.setCancelled( true );
 			return;
 		}
-
-		if ( !victim.isPlaying( ) || !damager.isPlaying( ) )
-			return;
 
 		ArenaPlayer at1 = victim.ap;
-		ArenaPlayer at2 = victim.ap;
+		ArenaPlayer at2 = damager.ap;
 
-		if ( at1.a != at2.a ) {
+		if ( at1.arena != at2.arena ) {
 			e.setCancelled( true );
 			return;
 		}
 
-		if ( at1.t == at2.t ) {
+		if ( at1.team == at2.team ) {
 			e.setCancelled( true );
 			return;
 		}
@@ -92,6 +92,5 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler
 	public void blockBreak ( final BlockBreakEvent e ) {
-
 	}
 }
