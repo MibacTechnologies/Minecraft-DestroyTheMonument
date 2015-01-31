@@ -6,8 +6,8 @@ import org.bukkit.event.Listener;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaBlockBreakEvent;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaJoinEvent;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaLeaveEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player.ArenaPlayerJoinEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player.ArenaPlayerLeaveEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**
@@ -17,7 +17,7 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 public class ArenaEvents implements Listener {
 
 	@EventHandler ( priority = EventPriority.MONITOR )
-	public void leave ( final ArenaLeaveEvent e ) {
+	public void leave ( final ArenaPlayerLeaveEvent e ) {
 		//TODO
 		Arena a = e.getArena( );
 		DTMPlayer p = e.getDTMPlayer( );
@@ -26,7 +26,7 @@ public class ArenaEvents implements Listener {
 	}
 
 	@EventHandler ( priority = EventPriority.MONITOR )
-	public void join ( final ArenaJoinEvent e ) {
+	public void join ( final ArenaPlayerJoinEvent e ) {
 		//TODO
 	}
 

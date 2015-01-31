@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaJoinEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Player.ArenaPlayerJoinEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
 
 /**
@@ -46,7 +46,7 @@ public class Arena implements Serializable {
 	}
 
 	/**
-	 * In future, may possibly be private (non-accessible)
+	 * <s>In future, may possibly be private (non-accessible)</s>
 	 * 
 	 * @param player
 	 *            - (DTM)Player you want to add
@@ -66,7 +66,7 @@ public class Arena implements Serializable {
 		if ( isFull( ) )
 			return false;
 
-		ArenaJoinEvent e = new ArenaJoinEvent( player, this,
+		ArenaPlayerJoinEvent e = new ArenaPlayerJoinEvent( player, this,
 				getTeamWithLessPlayers( ) );
 
 		DTM.pm.callEvent( e );
