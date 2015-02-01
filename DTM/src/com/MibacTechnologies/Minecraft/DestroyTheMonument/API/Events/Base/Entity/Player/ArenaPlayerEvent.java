@@ -1,5 +1,8 @@
 package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player;
 
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.ArenaEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
@@ -8,7 +11,8 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
  * @author Michał "mibac138" Bączkowski
  * @since Creation date: 31 Jan 2015 (12:37:31)
  */
-public class ArenaPlayerEvent extends ArenaEvent {
+public class ArenaPlayerEvent extends Event {
+	private static final HandlerList handlers = new HandlerList( );
 	private final DTMPlayer player;
 
 	/**
@@ -18,9 +22,7 @@ public class ArenaPlayerEvent extends ArenaEvent {
 	 *        event.
 	 * @param <b>{@link Arena}</b> on which it happened.
 	 */
-	public ArenaPlayerEvent( final DTMPlayer player, final Arena arena ) {
-		super( arena );
-
+	public ArenaPlayerEvent( final DTMPlayer player ) {
 		this.player = player;
 	}
 
@@ -32,5 +34,18 @@ public class ArenaPlayerEvent extends ArenaEvent {
 	 */
 	public DTMPlayer getDTMPlayer ( ) {
 		return player;
+	}
+
+	@Override
+	public HandlerList getHandlers ( ) {
+		return handlers;
+	}
+
+	/**
+	 * 
+	 * @return all handlers for this event
+	 */
+	public static HandlerList getHandlerList ( ) {
+		return handlers;
 	}
 }

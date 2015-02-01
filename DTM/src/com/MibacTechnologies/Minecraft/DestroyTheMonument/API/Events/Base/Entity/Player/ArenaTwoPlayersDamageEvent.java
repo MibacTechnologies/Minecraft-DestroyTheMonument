@@ -3,43 +3,50 @@ package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entit
 import org.bukkit.event.Cancellable;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.CancellableArenaEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.ArenaEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**
  * @author Michał "mibac138" Bączkowski
- * @since Creation date: 31 Jan 2015 (12:44:19)
+ * @since Creation date: 31 Jan 2015 (19:59:05)
  */
-public class CancellableArenaPlayerEvent extends ArenaPlayerEvent implements
-		Cancellable {
+public class ArenaTwoPlayersDamageEvent extends ArenaPlayerDamageEvent
+		implements Cancellable {
 	private boolean cancelled;
+	private final DTMPlayer player;
 
 	/**
-	 * Constructor of {@link CancellableArenaEvent cancellable arena
-	 * event}. Uses main constructor (
-	 * {@link #CancellableArenaEvent(DTMPlayer, Arena, boolean) this}
-	 * ) and sets cancelled to false.
+	 * Constructor of {@link ArenaEvent arena event}
 	 * 
 	 * @param <b>({@link DMTPlayer DMT}) player</b> invoked in this
 	 *        event.
 	 * @param <b>{@link Arena}</b> on which it happened.
 	 */
-	public CancellableArenaPlayerEvent( final DTMPlayer player ) {
-		this( player, false );
+	public ArenaTwoPlayersDamageEvent( final DTMPlayer player,
+			final DTMPlayer player2, final double damage ) {
+		this( player, player2, damage, false );
 	}
 
 	/**
-	 * Main constructor of {@link CancellableArenaPlayerEvent
-	 * cancellable arena player event}
+	 * Main constructor of {@link ArenaEvent arena event}
 	 * 
 	 * @param <b>({@link DMTPlayer DMT}) player</b> invoked in this
 	 *        event.
 	 * @param <b>{@link Arena}</b> on which it happened.
-	 * @param <b>cancelled</b> whether the event is cancelled or not
 	 */
-	public CancellableArenaPlayerEvent( final DTMPlayer player,
+	public ArenaTwoPlayersDamageEvent( final DTMPlayer player,
+			final DTMPlayer player2, final double damage,
 			final boolean cancelled ) {
-		super( player );
+		super( player, damage );
+
+		this.player = player2;
+	}
+
+	/**
+	 * @return attacker
+	 */
+	public DTMPlayer getNdPlayer ( ) {
+		return player;
 	}
 
 	@Override

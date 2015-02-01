@@ -4,7 +4,6 @@ import org.bukkit.Location;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player.ArenaPlayerEvent;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**
  * @author Michał "mibac138" Bączkowski
@@ -13,9 +12,8 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 public class ArenaBlockEvent extends ArenaPlayerEvent {
 	private final Location location;
 
-	public ArenaBlockEvent( final DTMPlayer player, final Arena arena,
-			final Location location ) {
-		super( player, arena );
+	public ArenaBlockEvent( final DTMPlayer player, final Location location ) {
+		super( player );
 
 		this.location = location;
 	}

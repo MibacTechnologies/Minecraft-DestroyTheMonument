@@ -70,4 +70,9 @@ public class TeamManager {
 		if ( t == null )
 			teams.put( at, scb.registerNewTeam( a.name + "_t" + at.id ) );
 	}
+
+	protected void restart ( ) {
+		for ( ArenaTeam at : ArenaTeam.values( ) )
+			checkTeam( at );
+	}
 }

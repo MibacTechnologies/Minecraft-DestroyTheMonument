@@ -10,6 +10,7 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerJoinEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerLeaveEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.Bounds;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
 
 /**
@@ -26,8 +27,10 @@ public class Arena implements Serializable {
 	 * Currently not used - arena name.
 	 */
 	public final String name;
+	private final Bounds bounds;
 	private final UniqueList< DTMPlayer > players;
 	private final HashMap< ArenaTeam, Location > spawns;
+	private final GameState state;
 	private final TeamManager tm;
 
 	/**
@@ -37,13 +40,15 @@ public class Arena implements Serializable {
 	 * @param spawns
 	 *            of teams
 	 */
-	protected Arena( final String name,
+	protected Arena( final String name, final Bounds bounds,
 			final HashMap< ArenaTeam, Location > spawns ) {
 		this.name = name;
+		this.bounds = bounds;
 		this.spawns = spawns;
 		this.maxPlayers = 16;
 		this.players = new UniqueList< DTMPlayer >( );
 		this.tm = new TeamManager( this );
+		this.state = GameState.WAITING;
 	}
 
 	/**
@@ -94,6 +99,28 @@ public class Arena implements Serializable {
 	 */
 	public boolean addPlayer ( final Player player ) {
 		return addPlayer( DTM.PM.getDTMPlayer( player ) );
+	}
+
+	@Override
+	public boolean equals ( final Object o ) {
+		if ( !( o instanceof Arena ) )
+			return false;
+
+		Arena a = (Arena) o;
+
+		if ( a.getPlayers( ) == getPlayers( ) && a.name.equalsIgnoreCase( name )
+				&& a.maxPlayers == maxPlayers )
+			return true;
+
+		return false;
+	}
+
+	public Bounds getBounds ( ) {
+		return bounds;
+	}
+
+	public GameState getGameState ( ) {
+		return state;
 	}
 
 	/**
@@ -183,6 +210,34 @@ public class Arena implements Serializable {
 	}
 
 	/**
+	 * @param location
+	 *            which you want to check
+	 * @return true, if is in bounds, otherwise false
+	 */
+	public boolean isInBounds ( final Location location ) {
+		int minX = Math.min( bounds.getSt( ).getBlockX( ), bounds.getNd( )
+				.getBlockX( ) );
+		int maxX = Math.max( bounds.getSt( ).getBlockX( ), bounds.getNd( )
+				.getBlockX( ) );
+		int minY = Math.min( bounds.getSt( ).getBlockY( ), bounds.getNd( )
+				.getBlockY( ) );
+		int maxY = Math.max( bounds.getSt( ).getBlockY( ), bounds.getNd( )
+				.getBlockY( ) );
+		int minZ = Math.min( bounds.getSt( ).getBlockZ( ), bounds.getNd( )
+				.getBlockZ( ) );
+		int maxZ = Math.max( bounds.getSt( ).getBlockZ( ), bounds.getNd( )
+				.getBlockZ( ) );
+
+		if ( ( location.getBlockX( ) >= minX && location.getBlockX( ) <= maxX )
+				&& ( location.getBlockY( ) >= minY
+						&& location.getBlockY( ) <= maxY && ( location
+						.getBlockZ( ) >= minZ && location.getBlockZ( ) <= maxZ ) ) )
+			return true;
+
+		return false;
+	}
+
+	/**
 	 * @param player
 	 *            you want to check
 	 * @return true if player is playing (on this arena), otherwise
@@ -192,27 +247,14 @@ public class Arena implements Serializable {
 		return players.contains( player );
 	}
 
-	@Override
-	public boolean equals ( final Object o ) {
-		if ( !( o instanceof Arena ) )
-			return false;
-
-		Arena a = (Arena) o;
-
-		if ( a.getPlayers( ) == getPlayers( ) && a.name.equalsIgnoreCase( name )
-				&& a.maxPlayers == maxPlayers )
-			return true;
-
-		return false;
-	}
-
 	/**
 	 * @see UniqueList#remove(Object)
 	 */
 	public boolean removePlayer ( final DTMPlayer player ) {
-		DTM.pm.callEvent( new ArenaPlayerLeaveEvent( player, this ) );
+		DTM.pm.callEvent( new ArenaPlayerLeaveEvent( player ) );
 
-		player.ap = null;
+		player.quit( );
+
 		return players.remove( player );
 	}
 
@@ -221,5 +263,15 @@ public class Arena implements Serializable {
 	 */
 	public boolean removePlayer ( final Player player ) {
 		return removePlayer( DTM.PM.getDTMPlayer( player ) );
+	}
+
+	/**
+	 * Restarts arena
+	 * 
+	 * @see TeamManager#restart()
+	 */
+	public void restart ( ) {
+		tm.restart( );
+		players.clear( );
 	}
 }

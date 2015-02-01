@@ -25,8 +25,8 @@ public class CancellableArenaBlockEvent extends ArenaBlockEvent implements
 	 * @param <b>{@link Arena}</b> on which it happened.
 	 */
 	public CancellableArenaBlockEvent( final DTMPlayer player,
-			final Arena arena, final Location location ) {
-		this( player, arena, location, false );
+			final Location location ) {
+		this( player, location, false );
 	}
 
 	/**
@@ -39,8 +39,8 @@ public class CancellableArenaBlockEvent extends ArenaBlockEvent implements
 	 * @param <b>cancelled</b> whether the event is cancelled or not
 	 */
 	public CancellableArenaBlockEvent( final DTMPlayer player,
-			final Arena arena, final Location location, final boolean cancelled ) {
-		super( player, arena, location );
+			final Location location, final boolean cancelled ) {
+		super( player, location );
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entit
 import org.bukkit.event.Cancellable;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**
  * @author Michał "mibac138" Bączkowski
@@ -14,13 +13,13 @@ public class CancellableArenaTwoPlayerEvent extends ArenaTwoPlayersEvent
 	private boolean cancelled;
 
 	public CancellableArenaTwoPlayerEvent( final DTMPlayer player,
-			final DTMPlayer player2, final Arena arena ) {
-		this( player, player2, arena, false );
+			final DTMPlayer player2 ) {
+		this( player, player2, false );
 	}
 
 	public CancellableArenaTwoPlayerEvent( final DTMPlayer player,
-			final DTMPlayer player2, final Arena arena, final boolean cancelled ) {
-		super( player, player2, arena );
+			final DTMPlayer player2, final boolean cancelled ) {
+		super( player, player2 );
 
 		this.cancelled = cancelled;
 	}

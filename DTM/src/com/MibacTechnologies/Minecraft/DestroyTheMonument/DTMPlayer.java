@@ -16,6 +16,7 @@ public class DTMPlayer implements Serializable {
 	public int kills;
 	public int deaths;
 	public int money;
+	public int monumentsDestroyed;
 	public ArenaPlayer ap;
 
 	public DTMPlayer( final Player p, final int kills, final int deaths,

@@ -2,7 +2,6 @@ package com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Pla
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Base.Entity.Player.ArenaTwoPlayersEvent;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
 
 /**
  * Non-cancellable
@@ -12,7 +11,7 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
  */
 public class ArenaPlayerDeathEvent extends ArenaTwoPlayersEvent {
 	public ArenaPlayerDeathEvent( final DTMPlayer player,
-			final DTMPlayer player2, final Arena arena ) {
-		super( player, player2, arena );
+			final DTMPlayer player2 ) {
+		super( player, player2 );
 	}
 }

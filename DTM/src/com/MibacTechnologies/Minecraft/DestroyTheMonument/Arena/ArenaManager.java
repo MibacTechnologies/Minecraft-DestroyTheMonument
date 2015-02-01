@@ -6,7 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.ArenaCreateEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Arena.ArenaCreateEvent;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.Bounds;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
 
 /**
@@ -46,9 +47,9 @@ public class ArenaManager {
 	 *            of teams
 	 * @return boolean whether it was successful or not
 	 */
-	public ArenaCreationResult create ( final String name,
+	public ArenaCreationResult create ( final String name, final Bounds bounds,
 			final HashMap< ArenaTeam, Location > spawns ) {
-		Arena a = new Arena( name, spawns );
+		Arena a = new Arena( name, bounds, spawns );
 		boolean b = false;
 
 		int id = getNextId( );
@@ -120,5 +121,20 @@ public class ArenaManager {
 	 */
 	public int getNextId ( ) {
 		return arenas.size( ) + 1;
+	}
+
+	/**
+	 * 
+	 * @param location
+	 *            which you want to check
+	 * @return null if any arena didn't mark it as in bounds,
+	 *         otherwise arena
+	 */
+	public Arena isInBounds ( final Location location ) {
+		for ( Arena a : arenas )
+			if ( a.isInBounds( location ) )
+				return a;
+
+		return null;
 	}
 }

@@ -13,7 +13,8 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.ArenaTeam;
  * @since Creation date: 30 Jan 2015 (16:49:00)
  */
 public class ArenaPlayerJoinEvent extends CancellableArenaPlayerEvent {
-	private final ArenaTeam team;
+	private final Arena arena;
+	private ArenaTeam team;
 
 	public ArenaPlayerJoinEvent( final DTMPlayer player, final Arena arena,
 			final ArenaTeam team ) {
@@ -22,12 +23,21 @@ public class ArenaPlayerJoinEvent extends CancellableArenaPlayerEvent {
 
 	public ArenaPlayerJoinEvent( final DTMPlayer player, final Arena arena,
 			final ArenaTeam team, final boolean cancelled ) {
-		super( player, arena, cancelled );
+		super( player, cancelled );
 
 		this.team = team;
+		this.arena = arena;
+	}
+
+	public Arena getArena ( ) {
+		return arena;
 	}
 
 	public ArenaTeam getTeam ( ) {
 		return team;
+	}
+
+	public void setTeam ( final ArenaTeam team ) {
+		this.team = team;
 	}
 }

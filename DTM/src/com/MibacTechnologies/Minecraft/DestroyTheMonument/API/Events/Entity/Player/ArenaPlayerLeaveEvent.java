@@ -12,7 +12,7 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
  * @since Creation date: 30 Jan 2015 (16:50:46)
  */
 public class ArenaPlayerLeaveEvent extends ArenaPlayerEvent {
-	public ArenaPlayerLeaveEvent( final DTMPlayer player, final Arena arena ) {
-		super( player, arena );
+	public ArenaPlayerLeaveEvent( final DTMPlayer player ) {
+		super( player );
 	}
 }
