@@ -1,4 +1,4 @@
-# Going do due to legal reasons
+# Going down due to legal reasons
 
 
 # DestroyTheMonument - Minecraft game
