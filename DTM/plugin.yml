@@ -1,3 +1,4 @@
 name: MTDTM
 main: com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM
 version: 1.0
+depend: [WorldEdit, WorldGuard]

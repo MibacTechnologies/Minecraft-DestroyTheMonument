@@ -12,13 +12,14 @@ public class Bounds implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private final Location location1;
 	private final Location location2;
-	private final Location[] bounds;
 
 	public Bounds( final Location location1, final Location location2 ) {
 		this.location1 = location1;
 		this.location2 = location2;
-		Location[] bounds = { location1, location2 };
-		this.bounds = bounds;
+
+		if ( !location1.getWorld( ).equals( location2.getWorld( ) ) )
+			throw new IllegalArgumentException(
+					"Locations are in different worlds!" );
 	}
 
 	/**
@@ -35,10 +36,20 @@ public class Bounds implements Serializable {
 		return location2;
 	}
 
-	/**
-	 * @return bounds (2)
-	 */
-	public Location[] getBounds ( ) {
-		return bounds;
+	public boolean contains ( final Location location ) {
+		int minX = Math.min( getSt( ).getBlockX( ), getNd( ).getBlockX( ) );
+		int maxX = Math.max( getSt( ).getBlockX( ), getNd( ).getBlockX( ) );
+		int minY = Math.min( getSt( ).getBlockY( ), getNd( ).getBlockY( ) );
+		int maxY = Math.max( getSt( ).getBlockY( ), getNd( ).getBlockY( ) );
+		int minZ = Math.min( getSt( ).getBlockZ( ), getNd( ).getBlockZ( ) );
+		int maxZ = Math.max( getSt( ).getBlockZ( ), getNd( ).getBlockZ( ) );
+
+		if ( ( location.getBlockX( ) >= minX && location.getBlockX( ) <= maxX )
+				&& ( location.getBlockY( ) >= minY
+						&& location.getBlockY( ) <= maxY && ( location
+						.getBlockZ( ) >= minZ && location.getBlockZ( ) <= maxZ ) ) )
+			return true;
+
+		return false;
 	}
 }

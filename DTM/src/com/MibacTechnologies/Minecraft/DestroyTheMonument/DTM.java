@@ -18,22 +18,25 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.BooleanUtils;
  * @since Creation date: 28 Jan 2015 (17:54:46)
  */
 public class DTM extends JavaPlugin {
-	private FileConfiguration config;
-	public static PluginManager pm;
-	public static Logger l;
-	public static ArenaManager AM;
-	public static ItemManager IM;
-	public static PlayerManager PM;
-	public static ScoreboardManager SM;
+	public FileConfiguration config;
+	public PluginManager pm;
+	public Logger l;
+	public ArenaManager AM;
+	public ItemManager IM;
+	public PlayerManager PM;
+	public ScoreboardManager SM;
+	//public WorldGuardPlugin wg;
+	//public WorldEditPlugin we;
 	private static DTM dtm;
 
 	//private BooleanUtils bu;
 
 	@Override
 	public void onEnable ( ) {
-		//bu = 
 		new BooleanUtils( );
 		config = getConfig( );
+		//wg = getWorldGuard( );
+		//we = getWorldEdit( );
 		pm = getServer( ).getPluginManager( );
 		AM = new ArenaManager( );
 		IM = new ItemManager( );
@@ -62,4 +65,20 @@ public class DTM extends JavaPlugin {
 	public static DTM instance ( ) {
 		return dtm;
 	}
+
+	/*
+	 * private WorldEditPlugin getWorldEdit ( ) { Plugin plugin =
+	 * getServer( ).getPluginManager( ).getPlugin( "WorldGuard" ); //
+	 * WorldGuard may not be loaded if ( plugin == null || !( plugin
+	 * instanceof WorldEditPlugin ) ) return null; return
+	 * (WorldEditPlugin) plugin; }
+	 */
+
+	/*
+	 * private WorldGuardPlugin getWorldGuard ( ) { Plugin plugin =
+	 * getServer( ).getPluginManager( ).getPlugin( "WorldGuard" ); //
+	 * WorldGuard may not be loaded if ( plugin == null || !( plugin
+	 * instanceof WorldGuardPlugin ) ) return null; return
+	 * (WorldGuardPlugin) plugin; }
+	 */
 }

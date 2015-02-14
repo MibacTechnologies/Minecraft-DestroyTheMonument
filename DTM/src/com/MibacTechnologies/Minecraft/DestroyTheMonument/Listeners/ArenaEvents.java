@@ -48,14 +48,13 @@ public class ArenaEvents implements Listener {
 	}
 
 	@EventHandler ( priority = EventPriority.MONITOR )
-	public void Void ( final ArenaPlayerFallOutOfMapEvent e ) {
+	public void voidDmg ( final ArenaPlayerFallOutOfMapEvent e ) {
 	}
 
 	@EventHandler ( priority = EventPriority.MONITOR )
 	public void resp ( final ArenaPlayerRespawnEvent e ) {
 	}
 
-	//TODO
 	@EventHandler ( priority = EventPriority.MONITOR )
 	public void naturalResp ( final ArenaPlayerNaturalRespawnEvent e ) {
 	}

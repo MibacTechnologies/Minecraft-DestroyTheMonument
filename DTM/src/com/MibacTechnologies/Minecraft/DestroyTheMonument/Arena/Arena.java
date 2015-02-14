@@ -1,13 +1,17 @@
 package com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
+import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Arena.Map.ArenaMapRollbackEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerJoinEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerLeaveEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.Bounds;
@@ -28,10 +32,15 @@ public class Arena implements Serializable {
 	 */
 	public final String name;
 	private final Bounds bounds;
-	private final UniqueList< DTMPlayer > players;
+	private transient List< BlockState > rollback;
+	private final transient UniqueList< DTMPlayer > players;
 	private final HashMap< ArenaTeam, Location > spawns;
-	private final GameState state;
-	private final TeamManager tm;
+	private final UniqueList< Monument > monuments;
+	private transient GameState state;
+	private transient TeamManager tm;
+	private ArenaMode mode;
+
+	//TODO add load function (new TeamManager, and so on)
 
 	/**
 	 * 
@@ -49,10 +58,35 @@ public class Arena implements Serializable {
 		this.players = new UniqueList< DTMPlayer >( );
 		this.tm = new TeamManager( this );
 		this.state = GameState.WAITING;
+		this.rollback = new ArrayList< BlockState >( );
+		this.monuments = new UniqueList< Monument >( );
+		this.mode = ArenaMode.ENABLED;
+	}
+
+	public void setTeamManager ( final TeamManager tm ) {
+		this.tm = tm;
+	}
+
+	public void setMode ( final ArenaMode mode ) {
+		this.mode = mode;
+
+		if ( mode.isPlayable( ) )
+			;//TODO add something, but what? 
+		else {
+			for ( int i = 0; i < players.size( ); i++ )
+				players.get( i ).quit( );
+
+			rollback( );
+		}
+
+		this.state = GameState.WAITING;
+	}
+
+	public ArenaMode getMode ( ) {
+		return mode;
 	}
 
 	/**
-	 * <s>In future, may possibly be private (non-accessible)</s>
 	 * 
 	 * @param player
 	 *            - (DTM)Player you want to add
@@ -72,10 +106,13 @@ public class Arena implements Serializable {
 		if ( isFull( ) )
 			return false;
 
+		if ( !mode.isPlayable( ) )
+			return false;
+
 		ArenaPlayerJoinEvent e = new ArenaPlayerJoinEvent( player, this,
 				getTeamWithLessPlayers( ) );
 
-		DTM.pm.callEvent( e );
+		DTM.instance( ).pm.callEvent( e );
 
 		if ( e.isCancelled( ) )
 			return false;
@@ -98,7 +135,7 @@ public class Arena implements Serializable {
 	 *         or arena is full, otherwise true
 	 */
 	public boolean addPlayer ( final Player player ) {
-		return addPlayer( DTM.PM.getDTMPlayer( player ) );
+		return addPlayer( DTM.instance( ).PM.getDTMPlayer( player ) );
 	}
 
 	@Override
@@ -121,6 +158,38 @@ public class Arena implements Serializable {
 
 	public GameState getGameState ( ) {
 		return state;
+	}
+
+	public boolean destroyMonument ( final Location location,
+			final ArenaPlayer player ) {
+		Monument m = getMonument( location );
+
+		if ( m == null )
+			return false;
+
+		if ( player.team == m.owner )
+			return false;
+
+		if ( m.isDestroyed( ) )
+			return false;
+
+		m.setDestroyed( true );
+
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param location
+	 *            of monument
+	 * @return monument or null (if doesn't exist at that location)
+	 */
+	public Monument getMonument ( final Location location ) {
+		for ( int i = 0; i < monuments.size( ); i++ )
+			if ( monuments.get( i ).location.equals( location ) )
+				return monuments.get( i );
+
+		return null;
 	}
 
 	/**
@@ -190,7 +259,7 @@ public class Arena implements Serializable {
 	 * @see #getTeam(DTMPlayer)
 	 */
 	public ArenaTeam getTeam ( final Player player ) {
-		return getTeam( DTM.PM.getDTMPlayer( player ) );
+		return getTeam( DTM.instance( ).PM.getDTMPlayer( player ) );
 	}
 
 	/**
@@ -251,7 +320,7 @@ public class Arena implements Serializable {
 	 * @see UniqueList#remove(Object)
 	 */
 	public boolean removePlayer ( final DTMPlayer player ) {
-		DTM.pm.callEvent( new ArenaPlayerLeaveEvent( player ) );
+		DTM.instance( ).pm.callEvent( new ArenaPlayerLeaveEvent( player ) );
 
 		player.quit( );
 
@@ -262,7 +331,7 @@ public class Arena implements Serializable {
 	 * @see #removePlayer(DTMPlayer)
 	 */
 	public boolean removePlayer ( final Player player ) {
-		return removePlayer( DTM.PM.getDTMPlayer( player ) );
+		return removePlayer( DTM.instance( ).PM.getDTMPlayer( player ) );
 	}
 
 	/**
@@ -273,5 +342,34 @@ public class Arena implements Serializable {
 	public void restart ( ) {
 		tm.restart( );
 		players.clear( );
+		rollback( );
+
+		for ( int i = 0; i < monuments.size( ); i++ )
+			monuments.get( i ).setDestroyed( false );
+	}
+
+	public void rollback ( ) {
+		DTM.instance( ).pm.callEvent( new ArenaMapRollbackEvent( this ) );
+
+		List< BlockState > rb = rollback;
+
+		int i = rb.size( );
+
+		while ( !rb.isEmpty( ) ) {
+			rb.get( i ).update( true );
+			rb.remove( i );
+
+			i = rb.size( ) - 1;
+		}
+
+		rollback = rb;
+
+		for ( i = monuments.size( ) - 1; i <= 0; i-- )
+			monuments.get( i ).setDestroyed( false );
+	}
+
+	@Override
+	public int hashCode ( ) {
+		return 101; //TODO
 	}
 }

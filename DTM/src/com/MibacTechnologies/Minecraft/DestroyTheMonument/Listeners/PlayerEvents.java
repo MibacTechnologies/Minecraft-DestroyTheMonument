@@ -1,6 +1,7 @@
 package com.MibacTechnologies.Minecraft.DestroyTheMonument.Listeners;
 
-import org.bukkit.entity.Damageable;
+import java.util.HashMap;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTM;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.DTMPlayer;
@@ -21,7 +23,6 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Play
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerDeathEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerFallOutOfMapEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerNaturalRespawnEvent;
-import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerRespawnEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerShootBowEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.API.Events.Entity.Player.ArenaPlayerUnknownDamageEvent;
 import com.MibacTechnologies.Minecraft.DestroyTheMonument.Arena.Arena;
@@ -44,14 +45,20 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler
 	public void naturalResp ( final PlayerRespawnEvent e ) {
-		DTMPlayer player = DTM.PM.getDTMPlayer( e.getPlayer( ) );
+		DTMPlayer player = DTM.instance( ).PM.getDTMPlayer( e.getPlayer( ) );
 
 		if ( player == null || !player.isPlaying( ) )
 			return;
 
-		e.setRespawnLocation( player.ap.arena.getSpawn( player.p ) );
+		e.setRespawnLocation( player.ap.getSpawn( ) );
 
-		DTM.pm.callEvent( new ArenaPlayerNaturalRespawnEvent( player ) );
+		HashMap< Integer, ItemStack > items = DTM.instance( ).IM.getItems( );
+
+		for ( Integer i = Integer.valueOf( 0 ); i < items.size( ); i++ )
+			player.p.getInventory( ).setItem( i, items.get( i ) );
+
+		DTM.instance( ).pm.callEvent( new ArenaPlayerNaturalRespawnEvent(
+				player ) );
 	}
 
 	@EventHandler
@@ -59,8 +66,9 @@ public class PlayerEvents implements Listener {
 		if ( !valid( e.getEntity( ), e.getEntity( ).getKiller( ) ) )
 			return;
 
-		DTMPlayer p1 = DTM.PM.getDTMPlayer( e.getEntity( ) );
-		DTMPlayer p2 = DTM.PM.getDTMPlayer( e.getEntity( ).getKiller( ) );
+		final DTMPlayer p1 = DTM.instance( ).PM.getDTMPlayer( e.getEntity( ) );
+		DTMPlayer p2 = DTM.instance( ).PM.getDTMPlayer( e.getEntity( )
+				.getKiller( ) );
 
 		p1.deaths++;
 		p2.kills++;
@@ -68,28 +76,42 @@ public class PlayerEvents implements Listener {
 		p1.ap.deaths++;
 		p2.ap.kills++;
 
-		DTM.pm.callEvent( new ArenaPlayerDeathEvent( p1, p2 ) );
-
-		Damageable d = p1.p;
-		d.setHealth( d.getMaxHealth( ) );
-
-		DTM.pm.callEvent( new ArenaPlayerRespawnEvent( p1 ) );
-	}
+		DTM.instance( ).pm.callEvent( new ArenaPlayerDeathEvent( p1, p2 ) );
+		/*
+		 * Damageable d = p1.p; d.setHealth( d.getMaxHealth( ) );
+		 * DTM.pm.callEvent( new ArenaPlayerRespawnEvent( p1 ) );
+		 */
+		/*
+		 * new BukkitRunnable( ) {
+		 * @Override public void run ( ) { try { Object nmsPlayer =
+		 * p1.p.getClass( ).getMethod( "getHandle" ) .invoke( p1.p );
+		 * Object packet = Class .forName( "net.minecraft.server." +
+		 * Bukkit.getServer( ).getClass( ) .getPackage( ).getName( )
+		 * .replace( ".", "," ) .split( "," )[ 3 ] +
+		 * ".Packet205ClientCommand" ) .newInstance( );
+		 * packet.getClass( ).getField( "a" ).set( packet, 1 ); Object
+		 * con = nmsPlayer.getClass( ) .getField( "playerConnection"
+		 * ).get( nmsPlayer ); con.getClass( ).getMethod( "a",
+		 * packet.getClass( ) ) .invoke( con, packet ); } catch (
+		 * Throwable e ) { e.printStackTrace( ); } } }.runTaskLater(
+		 * DTM.instance( ), 2L ); DTM.instance( ).pm.callEvent( new
+		 * ArenaPlayerRespawnEvent( p1 ) );
+		 */}
 
 	@EventHandler
-	public void Void ( final EntityDamageByEntityEvent e ) {
+	public void voidDmg ( final EntityDamageByEntityEvent e ) {
 		if ( !( e.getEntity( ) instanceof Player ) )
 			return;
 
 		if ( e.getCause( ) != DamageCause.VOID )
 			return;
 
-		DTMPlayer p = DTM.PM.getDTMPlayer( (Player) e.getEntity( ) );
+		DTMPlayer p = DTM.instance( ).PM.getDTMPlayer( (Player) e.getEntity( ) );
 
 		if ( p == null || !p.isPlaying( ) )
 			return;
 
-		DTM.pm.callEvent( new ArenaPlayerFallOutOfMapEvent( p ) );
+		DTM.instance( ).pm.callEvent( new ArenaPlayerFallOutOfMapEvent( p ) );
 	}
 
 	@EventHandler
@@ -112,7 +134,7 @@ public class PlayerEvents implements Listener {
 		if ( !( e1 instanceof Player ) )
 			return;
 
-		DTMPlayer victim = DTM.PM.getDTMPlayer( (Player) e1 );
+		DTMPlayer victim = DTM.instance( ).PM.getDTMPlayer( (Player) e1 );
 
 		if ( victim == null )
 			return;
@@ -125,7 +147,7 @@ public class PlayerEvents implements Listener {
 				ArenaPlayerDamageByEntityEvent ae = new ArenaPlayerDamageByEntityEvent(
 						victim, e2, e.getDamage( ) );
 
-				DTM.pm.callEvent( ae );
+				DTM.instance( ).pm.callEvent( ae );
 
 				e.setDamage( ae.getDamage( ) );
 				e.setCancelled( ae.isCancelled( ) );
@@ -134,7 +156,7 @@ public class PlayerEvents implements Listener {
 
 			Player p2 = (Player) e2;
 
-			DTMPlayer damager = DTM.PM.getDTMPlayer( p2 );
+			DTMPlayer damager = DTM.instance( ).PM.getDTMPlayer( p2 );
 
 			if ( damager == null )
 				return;
@@ -167,7 +189,8 @@ public class PlayerEvents implements Listener {
 			if ( !victim.isPlaying( ) )
 				return;
 
-			DTM.pm.callEvent( new ArenaPlayerFallOutOfMapEvent( victim ) );
+			DTM.instance( ).pm.callEvent( new ArenaPlayerFallOutOfMapEvent(
+					victim ) );
 		} else {
 			if ( !victim.isPlaying( ) )
 				return;
@@ -175,7 +198,7 @@ public class PlayerEvents implements Listener {
 			ArenaPlayerUnknownDamageEvent ae = new ArenaPlayerUnknownDamageEvent(
 					victim, e.getDamage( ), e.getCause( ), e.isCancelled( ) );
 
-			DTM.pm.callEvent( ae );
+			DTM.instance( ).pm.callEvent( ae );
 
 			e.setDamage( ae.getDamage( ) );
 			e.setCancelled( ae.isCancelled( ) );
@@ -184,16 +207,16 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler
 	public void blockBreak ( final BlockBreakEvent e ) {
-		Arena a = DTM.AM.isInBounds( e.getBlock( ).getLocation( ) );
+		Arena a = DTM.instance( ).AM.isInBounds( e.getBlock( ).getLocation( ) );
 
 		if ( a == null )
 			return;
 
 		ArenaBlockBreakEvent ae = new ArenaBlockBreakEvent(
-				DTM.PM.getDTMPlayer( e.getPlayer( ) ), e.getBlock( )
+				DTM.instance( ).PM.getDTMPlayer( e.getPlayer( ) ), e.getBlock( )
 						.getLocation( ) );
 
-		DTM.pm.callEvent( ae );
+		DTM.instance( ).pm.callEvent( ae );
 
 		e.setCancelled( ae.isCancelled( ) );
 	}
@@ -204,7 +227,7 @@ public class PlayerEvents implements Listener {
 			return;
 
 		Player p = (Player) e.getEntity( );
-		DTMPlayer dp = DTM.PM.getDTMPlayer( p );
+		DTMPlayer dp = DTM.instance( ).PM.getDTMPlayer( p );
 
 		if ( dp == null || !dp.isPlaying( ) )
 			return;
@@ -216,7 +239,7 @@ public class PlayerEvents implements Listener {
 		ArenaPlayerShootBowEvent ae = new ArenaPlayerShootBowEvent( dp,
 				e.getBow( ), e.getProjectile( ), e.isCancelled( ) );
 
-		DTM.pm.callEvent( ae );
+		DTM.instance( ).pm.callEvent( ae );
 
 		e.setProjectile( ae.getProjectile( ) );
 		e.setCancelled( ae.isCancelled( ) );
@@ -226,8 +249,8 @@ public class PlayerEvents implements Listener {
 		if ( !( _p1 instanceof Player ) || !( _p2 instanceof Player ) )
 			return false;
 
-		DTMPlayer p1 = DTM.PM.getDTMPlayer( (Player) _p1 );
-		DTMPlayer p2 = DTM.PM.getDTMPlayer( (Player) _p2 );
+		DTMPlayer p1 = DTM.instance( ).PM.getDTMPlayer( (Player) _p1 );
+		DTMPlayer p2 = DTM.instance( ).PM.getDTMPlayer( (Player) _p2 );
 
 		if ( !( p1 != null && p2 != null ) )
 			return false;

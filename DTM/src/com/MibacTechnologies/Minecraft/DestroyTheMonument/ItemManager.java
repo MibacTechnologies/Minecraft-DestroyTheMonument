@@ -10,9 +10,11 @@ import org.bukkit.inventory.ItemStack;
  * @since Creation date: 29 Jan 2015 (15:11:30)
  */
 public class ItemManager {
-	private HashMap< Integer, ItemStack > items;
+	private final HashMap< Integer, ItemStack > items;
 
 	public ItemManager( ) {
+		this.items = new HashMap< Integer, ItemStack >( );
+
 		items.put( 0, new ItemStack( Material.STONE_SWORD, 1 ) );
 	}
 

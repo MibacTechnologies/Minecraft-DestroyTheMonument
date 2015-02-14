@@ -9,7 +9,11 @@ import org.bukkit.entity.Player;
  * @since Creation date: 29 Jan 2015 (15:54:09)
  */
 public class PlayerManager {
-	private LinkedHashSet< DTMPlayer > players;
+	private final LinkedHashSet< DTMPlayer > players;
+
+	public PlayerManager( ) {
+		this.players = new LinkedHashSet< DTMPlayer >( );
+	}
 
 	public DTMPlayer getDTMPlayer ( final Player p ) {
 		for ( DTMPlayer dp : players )

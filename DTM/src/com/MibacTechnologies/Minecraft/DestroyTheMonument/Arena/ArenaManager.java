@@ -15,10 +15,10 @@ import com.MibacTechnologies.Minecraft.DestroyTheMonument.Utils.UniqueList;
  * @since Creation date: 28 Jan 2015 (18:22:34)
  */
 public class ArenaManager {
-	private UniqueList< Arena > arenas;
+	private final UniqueList< Arena > arenas;
 
 	public ArenaManager( ) {
-
+		this.arenas = new UniqueList< Arena >( );
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class ArenaManager {
 
 		ArenaCreateEvent e = new ArenaCreateEvent( a, b );
 
-		DTM.pm.callEvent( e );
+		DTM.instance( ).pm.callEvent( e );
 
 		if ( e.isCancelled( ) )
 			return new ArenaCreationResult( null, -1, false );
@@ -80,16 +80,17 @@ public class ArenaManager {
 	}
 
 	public Arena getArena ( final String name ) {
-		for ( Arena a : arenas )
-			if ( a.name == name )
-				return a;
+		for ( int i = 0; i < arenas.size( ); i++ )
+			if ( arenas.get( i ).name.contentEquals( name ) )
+				return arenas.get( i );
 
 		return null;
 	}
 
 	public Arena getArena ( final Player p ) {
 		for ( Arena a : arenas )
-			if ( a.getPlayers( ).contains( DTM.PM.getDTMPlayer( p ) ) )
+			if ( a.getPlayers( )
+					.contains( DTM.instance( ).PM.getDTMPlayer( p ) ) )
 				return a;
 
 		return null;
